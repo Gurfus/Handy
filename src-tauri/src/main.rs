@@ -12,6 +12,11 @@ fn main() {
         // DMABUF renderer causes crashes on various GPU/display server configurations
         // See: https://github.com/tauri-apps/tauri/issues/9394
         std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+
+        // Prefer Wayland backend so gtk-layer-shell can connect natively to zwlr_layer_shell_v1
+        if std::env::var_os("WAYLAND_DISPLAY").is_some() && std::env::var_os("GDK_BACKEND").is_none() {
+            std::env::set_var("GDK_BACKEND", "wayland,x11");
+        }
     }
 
     #[cfg(target_os = "windows")]

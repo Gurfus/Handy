@@ -569,10 +569,9 @@ fn default_overlay_position() -> OverlayPosition {
 }
 
 fn default_overlay_style() -> OverlayStyle {
-    // Linux hides the overlay by default; other platforms show the live overlay.
-    // Position is independent and only selects top vs. bottom placement.
+    // On Omarchy / Linux with native gtk-layer-shell, default to Minimal overlay.
     #[cfg(target_os = "linux")]
-    return OverlayStyle::None;
+    return OverlayStyle::Minimal;
     #[cfg(not(target_os = "linux"))]
     return OverlayStyle::Live;
 }
