@@ -17,6 +17,7 @@ fn main() {
     // macOS links transcribe-cpp statically via the `metal` feature.)
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
         println!("cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN/../lib/Handy:$ORIGIN/../lib");
+        println!("cargo:rustc-link-lib=cblas");
     }
 
     // Stage transcribe-cpp's shared runtime libraries (and the dlopen'd ggml
