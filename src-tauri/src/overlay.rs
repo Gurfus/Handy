@@ -105,6 +105,25 @@ fn configure_layer_shell_surface(
     height: f64,
 ) {
     use gtk::prelude::{GtkWindowExt, WidgetExt};
+    use gtk_layer_shell::LayerShell;
+
+    // Detect focused monitor from Hyprland so overlay always appears on the active screen
+    if let Ok(output) = std::process::Command::new("hyprctl")
+        .args(["monitors", "-j"])
+        .output()
+    {
+        if let Ok(json) = serde_json::from_slice::<Vec<serde_json::Value>>(&output.stdout) {
+            if let Some(focused) = json.iter().find(|m| m["focused"].as_bool() == Some(true)) {
+                if let Some(id) = focused["id"].as_i64() {
+                    if let Some(display) = gtk::gdk::Display::default() {
+                        if let Some(monitor) = display.monitor(id as i32) {
+                            gtk_window.set_monitor(&monitor);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     configure_layer_shell_position(gtk_window, position);
 
@@ -520,7 +539,9 @@ fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str) {
             let position = settings::get_settings(app_handle).overlay_position;
             match overlay_window.gtk_window() {
                 Ok(gtk_window) => {
-                    configure_layer_shell_surface(&gtk_window, position, width, height)
+                    use gtk::prelude::WidgetExt;
+                    configure_layer_shell_surface(&gtk_window, position, width, height);
+                    gtk_window.show_all();
                 }
                 Err(error) => log::error!("Failed to access GTK overlay window: {error}"),
             }
