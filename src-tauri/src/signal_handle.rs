@@ -23,6 +23,24 @@ pub fn send_transcription_input(app: &AppHandle, binding_id: &str, source: &str)
     }
 }
 
+/// Send an external press (push-to-talk start) to the coordinator.
+pub fn send_transcription_press(app: &AppHandle, binding_id: &str, source: &str) {
+    if let Some(c) = app.try_state::<TranscriptionCoordinator>() {
+        c.send_external_press(binding_id, source);
+    } else {
+        warn!("TranscriptionCoordinator not initialized");
+    }
+}
+
+/// Send an external release (push-to-talk stop) to the coordinator.
+pub fn send_transcription_release(app: &AppHandle, binding_id: &str, source: &str) {
+    if let Some(c) = app.try_state::<TranscriptionCoordinator>() {
+        c.send_external_release(binding_id, source);
+    } else {
+        warn!("TranscriptionCoordinator not initialized");
+    }
+}
+
 /// Listen for Unix signals that remotely toggle transcription.
 ///
 /// SIGUSR2 toggles plain transcription on all Unix platforms. SIGUSR1

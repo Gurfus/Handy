@@ -624,6 +624,30 @@ impl TranscriptionCoordinator {
         );
     }
 
+    /// Send an external press event (e.g. CLI --start-transcription for push-to-talk).
+    pub fn send_external_press(&self, binding_id: &str, source: &str) {
+        self.send(
+            binding_id,
+            source,
+            true,
+            ShortcutActivation::PushToTalk,
+            Duration::ZERO,
+            true,
+        );
+    }
+
+    /// Send an external release event (e.g. CLI --stop-transcription for push-to-talk).
+    pub fn send_external_release(&self, binding_id: &str, source: &str) {
+        self.send(
+            binding_id,
+            source,
+            false,
+            ShortcutActivation::PushToTalk,
+            Duration::ZERO,
+            true,
+        );
+    }
+
     fn send(
         &self,
         binding_id: &str,
